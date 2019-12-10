@@ -1,0 +1,266 @@
+#include <iostream>
+#include <ctime>
+#include <Windows.h>
+using namespace std;
+class Card
+{
+	int suit; // spades = 1, clubs, hearts, diamonds
+	int value_; // knave = 11, queen, king, ace = 15
+public:
+	Card() {};
+	Card(int suit, int value_)
+	{
+		this->suit = suit;
+		this->value_ = value_;
+	}
+	operator int()
+	{
+		return this->value_;
+	}
+	operator string()
+	{
+		string ace = "Туз ";
+		string king = "Король ";
+		string queen = "Дама ";
+		string knave = "Валет ";
+		string six = "Шестерка ";
+		string seven = "Семерка ";
+		string eight = "Восьмерка ";
+		string nine = "Девятка ";
+		string ten = "Десять ";
+		string spades = "пик.";
+		string clubs = "треф.";
+		string hearts = "червей.";
+		string diamonds = "бубей.";
+		string return_1 = "    error    ";
+		string return_2 = "    error2    ";
+		switch (this->value_)
+		{
+		case 6:
+			return_1 = six;
+			break;
+		case 7:
+			return_1 = seven;
+			break;
+		case 8:
+			return_1 = eight;
+			break;
+		case 9:
+			return_1 = nine;
+			break;
+		case 10:
+			return_1 = ten;
+			break;
+		case 11:
+			return_1 = knave;
+			break;
+		case 12:
+			return_1 = queen;
+			break;
+		case 13:
+			return_1 = king;
+			break;
+		case 15:
+			return_1 = ace;
+			break;
+		}
+		switch (this->suit)
+		{
+		case 1:
+			return_2 = spades;
+			break;
+		case 2:
+			return_2 = clubs;
+			break;
+		case 3:
+			return_2 = hearts;
+			break;
+		case 4:
+			return_2 = diamonds;
+			break;
+		}
+		return return_1 + return_2;
+	}
+	Card& operator = (const Card &right)
+	{
+		suit = right.suit;
+		value_ = right.value_;
+		return *this;
+	}
+	void suit_change(int suit) { this->suit = suit; }
+	void value_change(int value_) { this->value_ = value_; }
+};
+class Deck
+{
+	Card card_arr[36];
+	int card_index;
+public:
+	Deck()
+	{
+		this->card_index = 35;
+		Card card_arr_temp[36];
+		bool random_arr[36];
+		int index_ = 0;
+		for (int i(1); i < 5; i++)
+		{
+			for (int k(6); k < 16; k++)
+			{
+				random_arr[i] = 0;
+				if (k == 14) continue;
+				card_arr_temp[index_].suit_change(i);
+				card_arr_temp[index_].value_change(k);
+				index_++;
+			}
+		}
+		for (int i(0); i < 36; i++)
+		{
+			int R;
+			do
+			{
+				R = rand() % 36;
+			} while (random_arr[R] == 1);
+			random_arr[R] = 1;
+			card_arr[R] = card_arr_temp[i];
+		}
+	}
+	void new_mix()
+	{
+		this->card_index = 35;
+		Card card_arr_temp[36];
+		bool random_arr[36];
+		int index_ = 0;
+		for (int i(1); i < 5; i++)
+		{
+			for (int k(6); k < 16; k++)
+			{
+				random_arr[i] = 0;
+				if (k == 14) continue;
+				card_arr_temp[index_].suit_change(i);
+				card_arr_temp[index_].value_change(k);
+				index_++;
+			}
+		}
+		for (int i(0); i < 36; i++)
+		{
+			int R;
+			do
+			{
+				R = rand() % 36;
+			} while (random_arr[R] == 1);
+			random_arr[R] = 1;
+			card_arr[R] = card_arr_temp[i];
+		}
+	}
+	void print_card(int index)
+	{
+		cout << "\t\t\t" << index + 1 << ". " << (string)this->card_arr[index] << endl;
+	}
+	void last_card()
+	{
+		if (card_index < 0)
+		{
+			system("cls");
+			cout << endl << "\t\t\t" << "Карты закончились!" << endl;
+			return;
+		}
+		print_card(card_index);
+		cout << endl;
+		card_index--;
+	}
+	void print_all()
+	{
+		cout << endl << endl;
+		for (int i(0); i < card_index + 1; i++) {
+			this->print_card(i);
+		}
+		cout << endl << endl << "\t\t\t";
+	}
+	void take_card()
+	{
+		int index_;
+		do
+		{
+			cout << "\n\n\t\t\tВведите номер карты.\n\n\t\t\t";
+			cin >> index_;
+			system("cls");
+			if (index_ - 1 > this->card_index)
+			{
+				cout << "\n\n\t\t\tКарт меньше чем " << index_;
+				cout << "\n\n\t\t\t";
+				system("pause");
+				system("cls");
+				continue;
+			}
+			cout << endl << endl;
+			this->print_card(index_ - 1);
+			cout << endl << endl << "\t\t\t";
+			for (int i(index_ - 1); i < this->card_index; i++) this->card_arr[i] = card_arr[i + 1];
+			this->card_index--;
+			break;
+		} while (true);
+	}
+	Card& operator[] (const int index);
+};
+Card& Deck::operator [] (const int index)
+{
+	return card_arr[index];
+}
+int main()
+{
+	srand(time(NULL));
+	setlocale(LC_ALL, "RUS");
+	Deck deck;
+	cout <<		"\n\n\t\t\tДобро пожаловать в имитатор игральной колоды.                         (c)Lumus\
+				\n\t\t\tКолода создана и перетасована. \
+				\n\t\t\tВы можете тянуть по 1 карте либо же просмотреть всю колоду. \
+				\n\t\t\t(но так вообще-то нечестно)\n\n\t\t\t";
+	system("pause");
+	int case_ = 0;
+	bool start_ = 1;
+	while (start_)
+	{
+		system("cls");
+		switch (case_)
+		{
+		case 0:
+			cout << "\n\n\t\t\tГлавное меню.                                                     (c)Lumus\n"; //0
+			cout << endl;
+			cout << "\t\t\t1. Вытянуть верхнюю карту.\n"; //1
+			cout << "\t\t\t2. Вскрыть все карты.\n"; //2
+			cout << "\t\t\t3. Вскрыть определенную карту.\n"; //3
+			cout << "\t\t\t4. Перетасовать колоду.\n"; //4
+			cout << "\t\t\t5. Выход из программы.\n\t\t\t"; //5
+			cin >> case_;
+			break;
+		case 1:
+			cout << endl << endl;
+			deck.last_card();
+			cout << endl << endl << "\t\t\t";
+			system("pause");
+			case_ = 0;
+			break;
+		case 2:
+			deck.print_all();
+			system("pause");
+			case_ = 0;
+			break;
+		case 3:
+			deck.take_card();
+			system("pause");
+			case_ = 0;
+			break;
+		case 4:
+			deck.new_mix();
+			system("cls");
+			cout << "\n\n\t\t\tГотово!\n\n\t\t\t";
+			system("pause");
+			case_ = 0;
+			break;
+		case 5:
+			start_ = 0;
+			break;
+		}
+	}
+	system("cls");
+			cout << "\n\n\t\t\tДо новых встреч!                                                  (c)Lumus\n\n\n";
+}
