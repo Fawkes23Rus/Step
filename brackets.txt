@@ -1,0 +1,69 @@
+#include <iostream>
+#include <ctime>
+using namespace std;
+
+int main()
+{
+	const int lenght_ = 100;
+	char enter_[lenght_];
+	cout << "Enter the string:_  ";
+	cin.getline(enter_, lenght_);
+	bool error_(0);
+	int error_index_;
+	char check_arr[lenght_];
+	int k = 0;
+	for (int i(0); i < lenght_; i++)
+	{
+		if (enter_[i] == ';') break;
+		else if (enter_[i] == '(' || enter_[i] == '[' || enter_[i] == '{')
+		{
+			check_arr[k] = enter_[i];
+			k++;
+		}
+		else if (enter_[i] == ')')
+		{
+			if (check_arr[k - 1] != '(')
+			{
+				error_ = 1;
+				error_index_ = i + 1;
+				break;
+			}
+			else
+			{
+				check_arr[k - 1] = '\0';
+				k -= 1;
+			}
+		}
+		else if (enter_[i] == ']')
+		{
+			if (check_arr[k - 1] != '[')
+			{
+				error_ = 1;
+				error_index_ = i + 1;
+				break;
+			}
+			else
+			{
+				check_arr[k - 1] = '\0';
+				k -= 1;
+			}
+		}
+		else if (enter_[i] == '}')
+		{
+			if (check_arr[k - 1] != '{')
+			{
+				error_ = 1;
+				error_index_ = i + 1;
+				break;
+			}
+			else
+			{
+				check_arr[k - 1] = '\0';
+				k -= 1;
+			}
+		}
+	}
+	if (k != 0) error_ = 1;
+	if (!error_) cout << "Correct input";
+	else { for (int i(0); i < error_index_; i++) cout << enter_[i]; cout << " <- Incorrect Symbol"; }
+}
